@@ -7,7 +7,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -62,7 +65,18 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.READ_CALL_LOG, Manifest.permission.MANAGE_EXTERNAL_STORAGE}, 123);
         }else{
             initContentResolver();
+            getFieldName();
         }
+    }
+
+    private void getFieldName(){
+        StringBuffer stringBuffer = new StringBuffer();
+        Uri uri = Settings.System.CONTENT_URI;
+        Cursor cursor = contentResolver.query(uri, null, null, null);
+        for(int i=0;i<cursor.getColumnCount();i++){
+            stringBuffer.append(cursor.getColumnName(i)+"\n");
+        }
+        fieldNameResult.setText(stringBuffer);
     }
 
     public void getFieldContentFun(View view){
