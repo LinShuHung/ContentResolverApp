@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -80,7 +81,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getFieldContentFun(View view){
-
+        if(contentResolver!=null){
+            HashMap<String, String> contentResult;
+            Uri uri = Settings.System.CONTENT_URI;
+            Cursor cursor = contentResolver.query(uri, null, null, null);
+            while(cursor.moveToNext()){
+                String nameResult = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                String valueResult = cursor.getString(cursor.getColumnIndexOrThrow("value"));
+                String result = String.format("%s:%s", nameResult, valueResult);
+                contentResult = new HashMap<>();
+                contentResult.put(from[0], result);
+                data.add(contentResult);
+                simpleAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     private boolean userAgreePermission(){
@@ -90,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
             result = true;
         }
-
         return result;
     }
 
